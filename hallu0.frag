@@ -6,11 +6,18 @@ uniform float time;
 uniform vec2 resolution;
 uniform sampler2D tex0;
 
-float onLine(vec2 uv, float width) {
+float circ(vec2 uv, float radius) {
 
-  float l = step(width / 2, uv.x);
-  
-  return l;
+  vec2 dist = uv - vec2(0.5);
+
+  return 1. - smoothstep(radius - (radius * 0.01),
+                         radius + (radius * 0.01),
+                         dot(dist, dist) * 4.0);
+}
+
+float sinwave(vec2 uv, float mag, float off) {
+
+  return step(0.05, uv.y + sin(mag * uv.x + time / 1.0) / 10.0 - off);
 }
 
 void main() {
@@ -19,11 +26,11 @@ void main() {
   
   vec3 color = vec3(0.65, 0.75, 0.80);
 
-  float lx = step(0.05, uv.y + sin(32.0 * uv.x + time / 1.0) / 10.0 - 0.1);
+  float lx = sinwave(uv, 32.0, 0.1);
 
-  float lxx = step(0.05, uv.y + sin(16.0 * uv.x + time / 1.0) / 10.0 - 0.2);
+  float lxx = sinwave(uv, 16.0, 0.2);
 
-  float lxxx = step(0.05, uv.y + sin(8.0 * uv.x + time / 1.0) / 10.0 - 0.4);
+  float lxxx = sinwave(uv, 8.0, 0.4);
   
   float ly = step(0.1, uv.x);
   
@@ -32,6 +39,8 @@ void main() {
   color.g /= lxxx;
 
   color.r -= 1.0 - lx;
+
+  color.b *= circ(uv, .5);
   
   FragColor = vec4(color, 1.0f);
 }
