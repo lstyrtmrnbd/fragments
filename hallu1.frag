@@ -22,7 +22,16 @@ float sinwave(vec2 uv, float mag, float off) {
 
 void main() {
 
-  vec3 color = vec3(0.5, 0.5, 0.5);
+   vec2 uv = gl_FragCoord.xy / resolution.xy;
+
+   uv.x *= resolution.x / resolution.y;
+
+   uv = uv * 2.0 - 1.0;
+  
+  vec3 color = vec3(0.0);
+
+  color.rg += uv;
+  color.b += 0.5;
   
   FragColor = vec4(color, 1.0f);
 }
